@@ -7,3 +7,4 @@
 3. 数据库使用 sqlite （当然切换为mysql十分简单）
 
 ## 软件效果截图
+![软件效果图](https://raw.githubusercontent.com/CityManager/thermalPrintApp/master/screenshots/app1.png)
