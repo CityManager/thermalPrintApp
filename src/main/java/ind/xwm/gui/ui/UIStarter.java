@@ -212,12 +212,12 @@ public class UIStarter {
     }
 
     private void recordPanelInit(PrintForm form) {
-        JTextField searchTxtField = form.getSearchField();
-
-        java.util.List<ProductOrder> products = productOrderService.findAll();
-        form.getSearchResultPanel().getViewport().add(this.initRecordPanel(products));
-        form.getSearchResultPanel().validate();
-        form.getSearchResultPanel().repaint();
+        final JTextField searchTxtField = form.getSearchField();
+        final JScrollPane searchResultPanel = form.getSearchResultPanel();
+        java.util.List<ProductOrder> products = productOrderService.findAll();  // 不符合规范
+        searchResultPanel.getViewport().add(this.initRecordPanel(products));
+        searchResultPanel.validate();
+        searchResultPanel.repaint();
 
         JButton searchBtn = form.getSearchBtn();
         for (ActionListener l : searchBtn.getActionListeners()) {
@@ -225,12 +225,13 @@ public class UIStarter {
         }
         searchBtn.addActionListener(e -> {
             String searchKey = searchTxtField.getText();
-            java.util.List<ProductOrder> searchOrders = productOrderService.searchOrders(searchKey);
-            form.getSearchResultPanel().getViewport().add(this.initRecordPanel(searchOrders));
-            form.getSearchResultPanel().validate();
-            form.getSearchResultPanel().repaint();
+            java.util.List<ProductOrder> searchOrders = productOrderService.searchOrders(searchKey); // 不符合规范
+            searchResultPanel.getViewport().add(this.initRecordPanel(searchOrders));
+            searchResultPanel.validate();
+            searchResultPanel.repaint();
         });
     }
+
 
     private void productPanelInit(PrintForm form) {
         JTextField proNameField = form.getProductNameField();
@@ -239,7 +240,7 @@ public class UIStarter {
         proNameField.setText("");
         proUnitField.setText("");
         proPriceField.setText("");
-        java.util.List<Product> products = productService.findAll();
+        java.util.List<Product> products = productService.findAll();  // 不符合规范
         JTable productsTable = new JTable() {
             @Override
             public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
@@ -282,16 +283,16 @@ public class UIStarter {
             if (selectRow != -1) {
                 String proName = String.valueOf(tableModel.getValueAt(selectRow, 0));
                 if (StringUtils.isNotBlank(proName)) { // 没有启动swingworker
-                    productService.delete(proName);
+                    productService.delete(proName);  // 不符合规范
                 }
                 tableModel.removeRow(selectRow);
             }
         });
         JButton productSaveBtn = form.getProductSaveBtn();
-        for(ActionListener l: productSaveBtn.getActionListeners()) {
+        for(ActionListener l: productSaveBtn.getActionListeners()) { // 先清理掉已有的多有监听事件
             productSaveBtn.removeActionListener(l);
         }
-        productSaveBtn.addActionListener(e -> {
+        productSaveBtn.addActionListener(e -> { // 重新添加监听事件
             String proName = proNameField.getText();
             String proUnit = proUnitField.getText();
             String proPrice = proPriceField.getText();
@@ -328,27 +329,22 @@ public class UIStarter {
 
     }
 
+    /**
+     * 订单列表信息渲染到JPanel中，并返回该JPanel
+     * @param products 订单列表
+     * @return 订单信息JPanel
+     */
     private JPanel initRecordPanel(java.util.List<ProductOrder> products) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder(""));
+        boolean isOdd = false;
         for (ProductOrder order : products) {
-            SearchItemForm searchItemForm = new SearchItemForm();
-            searchItemForm.setOrderContent(order);
+            SearchItemForm searchItemForm = new SearchItemForm(order);
+            searchItemForm.setBackGroundColor(isOdd ? new Color(197, 165, 175): new Color(121, 178, 197));
+            isOdd = !isOdd;
             JPanel itemPanel = searchItemForm.getSearchItemPanel();
             itemPanel.setBorder(BorderFactory.createTitledBorder(""));
-            searchItemForm.getReprintBtn().addActionListener(e -> {
-                SwingWorker worker = new SwingWorker() {
-                    @Override
-                    protected Object doInBackground() throws Exception {
-                        P58Model p58Model = new P58Model();
-                        p58Model.setOrderContent(order);
-                        PrintUtil.print58(p58Model);
-                        return null;
-                    }
-                };
-                worker.execute();
-            });
             panel.add(itemPanel);
         }
         panel.validate();
@@ -357,6 +353,9 @@ public class UIStarter {
     }
 
 
+    /**
+     * 应用程序界面初始化
+     */
     public void init() {
         PrintForm form = new PrintForm();
         form.getTabbedPane().addChangeListener(e -> {

@@ -2,6 +2,8 @@ package ind.xwm.gui.ui;
 
 import ind.xwm.gui.model.OrderDetail;
 import ind.xwm.gui.model.ProductOrder;
+import ind.xwm.gui.print.P58Model;
+import ind.xwm.gui.utils.PrintUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -22,7 +24,19 @@ public class SearchItemForm {
     private JPanel orderDetailPanel;
     private JLabel orderCountLable;
     private JLabel orderAmountLabel;
+    private JRadioButton deliveredRadio;
+    private JButton detailBtn;
+    private JPanel orderInfoPanel;
 
+    private boolean detailShow = false;
+    private ProductOrder order;
+
+    public SearchItemForm(ProductOrder order) {
+        if (order != null) {
+            this.order = order;
+            this.init();
+        }
+    }
 
     public JPanel getSearchItemPanel() {
         return searchItemPanel;
@@ -104,7 +118,39 @@ public class SearchItemForm {
         this.orderAmountLabel = orderAmountLabel;
     }
 
-    public void setOrderContent(ProductOrder order) {
+    public JRadioButton getDeliveredRadio() {
+        return deliveredRadio;
+    }
+
+    public void setDeliveredRadio(JRadioButton deliveredRadio) {
+        this.deliveredRadio = deliveredRadio;
+    }
+
+    public JButton getDetailBtn() {
+        return detailBtn;
+    }
+
+    public void setDetailBtn(JButton detailBtn) {
+        this.detailBtn = detailBtn;
+    }
+
+    public boolean isDetailShow() {
+        return detailShow;
+    }
+
+    public void setDetailShow(boolean detailShow) {
+        this.detailShow = detailShow;
+    }
+
+    public ProductOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(ProductOrder order) {
+        this.order = order;
+    }
+
+    private void init() {
         String orderTime = order.getOrderTime();
         String name = order.getCustomerName();
         String phone = order.getCustomerPhone();
@@ -112,46 +158,24 @@ public class SearchItemForm {
         String count = order.getTotalCount();
         String amount = order.getTotalPrice();
 
-        if(StringUtils.isNotBlank(order.getOrderId()) && order.getOrderId().length() > 8) {
+
+        // 订单面板控件数据填充
+        if (StringUtils.isNotBlank(order.getOrderId()) && order.getOrderId().length() > 8) {
             String orderNo = order.getOrderId().substring(8);
-            this.getOrderNoField().setText(orderNo);
+            orderNoField.setText(orderNo);
         }
+        orderTimeField.setText(StringUtils.isNotBlank(orderTime) ? orderTime : "");
+        nameField.setText(StringUtils.isNotBlank(name) ? name : "");
+        phoneField.setText(StringUtils.isNotBlank(phone) ? phone : "");
+        payLabel.setText((payStatus == 1) ? "已付款" : "未付款");
+        orderCountLable.setText(StringUtils.isNotBlank(count) ? "总数：" + count : "总数：0");
+        orderAmountLabel.setText(StringUtils.isNotBlank(amount) ? "总额：" + amount : "总额：");
 
-        if(StringUtils.isNotBlank(orderTime)) {
-            this.getOrderTimeField().setText(orderTime);
-        }
-
-        if(StringUtils.isNotBlank(name)) {
-            this.getNameField().setText(name);
-        }
-
-        if(StringUtils.isNotBlank(phone)) {
-            this.getPhoneField().setText(phone);
-        }
-
-        if(payStatus == 1) {
-            this.getPayLabel().setText("已付款");
-        } else {
-            this.getPayLabel().setText("未付款");
-        }
-
-        if(StringUtils.isNotBlank(count)) {
-            this.getOrderCountLable().setText("总数：" + count);
-        } else {
-            this.getOrderCountLable().setText("总数：0");
-        }
-
-        if(StringUtils.isNotBlank(amount)) {
-            this.getOrderAmountLabel().setText("总额：" + amount);
-        } else {
-            this.getOrderAmountLabel().setText("总额：");
-        }
-
-
+        // 订单详情表格
         JTable jTable = new JTable();
         DefaultTableModel tableModel = new DefaultTableModel(null, new String[]{"商品", "数量", "单位", "单价", "金额"});
-        for(OrderDetail orderDetail: order.getOrderDetails()) {
-            Object[] data = new Object[] {
+        for (OrderDetail orderDetail : order.getOrderDetails()) {
+            Object[] data = new Object[]{
                     orderDetail.getProductName(),
                     orderDetail.getProductCount(),
                     orderDetail.getProductUnit(),
@@ -162,16 +186,49 @@ public class SearchItemForm {
         }
         jTable.setModel(tableModel);
         jTable.setEnabled(false);
-        jTable.setFont(new Font("Default", Font.PLAIN,14));
+        jTable.setFont(new Font("Default", Font.PLAIN, 14));
         jTable.setBorder(BorderFactory.createEtchedBorder());
         jTable.setRowHeight(25);
         jTable.setBackground(new Color(238, 238, 238));
-        this.getOrderDetailPanel().setLayout(new BoxLayout(this.getOrderDetailPanel(), BoxLayout.Y_AXIS));
-        this.getOrderDetailPanel().setBorder(BorderFactory.createTitledBorder("明细"));
-        this.getOrderDetailPanel().add(jTable);
-        this.getOrderDetailPanel().validate();
-        this.getOrderDetailPanel().repaint();
+
+        // 订单详情面板
+        orderDetailPanel.setLayout(new BoxLayout(this.getOrderDetailPanel(), BoxLayout.Y_AXIS));
+        orderDetailPanel.setBorder(BorderFactory.createTitledBorder("明细"));
+        orderDetailPanel.add(jTable);
+        orderDetailPanel.setVisible(detailShow);
+        orderDetailPanel.validate();
+        orderDetailPanel.repaint();
+
+        // 打印按钮
+        reprintBtn.addActionListener(e -> {
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                protected Object doInBackground() {
+                    P58Model p58Model = new P58Model();
+                    p58Model.setOrderContent(order);
+                    PrintUtil.print58(p58Model);
+                    return null;
+                }
+
+            };
+            worker.execute();
+        });
+
+        // 详情隐藏或者显示按钮
+        detailBtn.setText("显示明细");
+        detailBtn.addActionListener(e -> {
+            detailShow = !detailShow;
+            detailBtn.setText(detailShow ? "隐藏明细" : "显示明细");
+            orderDetailPanel.setVisible(detailShow);
+            orderDetailPanel.validate();
+            orderDetailPanel.repaint();
+        });
     }
 
+    public void setBackGroundColor(Color color) {
+        searchItemPanel.setBackground(color);
+        orderInfoPanel.setBackground(color);
+        orderDetailPanel.setBackground(color);
+    }
 
 }
