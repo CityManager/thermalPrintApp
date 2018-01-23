@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by XuWeiman on 2017/10/4.
@@ -20,22 +23,39 @@ public class SearchItemForm {
     private JTextField orderTimeField;
     private JTextField phoneField;
     private JButton reprintBtn;
-    private JLabel payLabel;
     private JPanel orderDetailPanel;
-    private JLabel orderCountLable;
+    private JLabel orderCountLabel;
     private JLabel orderAmountLabel;
     private JRadioButton deliveredRadio;
     private JButton detailBtn;
     private JPanel orderInfoPanel;
+    private JRadioButton payRadio;
+    private JButton editBtn;
+    private JLabel payLabel;
+    private JLabel deliveredLabel;
+    private JPanel panel1;
+    private JPanel panel2;
+    private JPanel panel3;
+
+    private java.util.List<ActionListener> actionListeners = new ArrayList<>();
 
     private boolean detailShow = false;
+    private boolean editing = false;
     private ProductOrder order;
+
+    private static Color[] colors = new Color[]{new Color(197, 165, 175), new Color(121, 178, 197)};
 
     public SearchItemForm(ProductOrder order) {
         if (order != null) {
             this.order = order;
-            this.init();
+            this.displayInit();
+            this.actionInit();
         }
+    }
+
+    public SearchItemForm(ProductOrder order, boolean isOdd) {
+        this(order);
+        this.setBackGroundColor(isOdd ? colors[0] : colors[1]);
     }
 
     public JPanel getSearchItemPanel() {
@@ -86,13 +106,30 @@ public class SearchItemForm {
         this.reprintBtn = reprintBtn;
     }
 
-    public JLabel getPayLabel() {
-        return payLabel;
+    public JPanel getOrderInfoPanel() {
+        return orderInfoPanel;
     }
 
-    public void setPayLabel(JLabel payLabel) {
-        this.payLabel = payLabel;
+    public void setOrderInfoPanel(JPanel orderInfoPanel) {
+        this.orderInfoPanel = orderInfoPanel;
     }
+
+    public JRadioButton getPayRadio() {
+        return payRadio;
+    }
+
+    public void setPayRadio(JRadioButton payRadio) {
+        this.payRadio = payRadio;
+    }
+
+    public JButton getEditBtn() {
+        return editBtn;
+    }
+
+    public void setEditBtn(JButton editBtn) {
+        this.editBtn = editBtn;
+    }
+
 
     public JPanel getOrderDetailPanel() {
         return orderDetailPanel;
@@ -102,12 +139,12 @@ public class SearchItemForm {
         this.orderDetailPanel = orderDetailPanel;
     }
 
-    public JLabel getOrderCountLable() {
-        return orderCountLable;
+    public JLabel getOrderCountLabel() {
+        return orderCountLabel;
     }
 
-    public void setOrderCountLable(JLabel orderCountLable) {
-        this.orderCountLable = orderCountLable;
+    public void setOrderCountLabel(JLabel orderCountLabel) {
+        this.orderCountLabel = orderCountLabel;
     }
 
     public JLabel getOrderAmountLabel() {
@@ -134,14 +171,6 @@ public class SearchItemForm {
         this.detailBtn = detailBtn;
     }
 
-    public boolean isDetailShow() {
-        return detailShow;
-    }
-
-    public void setDetailShow(boolean detailShow) {
-        this.detailShow = detailShow;
-    }
-
     public ProductOrder getOrder() {
         return order;
     }
@@ -150,11 +179,53 @@ public class SearchItemForm {
         this.order = order;
     }
 
-    private void init() {
+    public JLabel getPayLabel() {
+        return payLabel;
+    }
+
+    public void setPayLabel(JLabel payLabel) {
+        this.payLabel = payLabel;
+    }
+
+    public JLabel getDeliveredLabel() {
+        return deliveredLabel;
+    }
+
+    public void setDeliveredLabel(JLabel deliveredLabel) {
+        this.deliveredLabel = deliveredLabel;
+    }
+
+    public boolean isDetailShow() {
+        return detailShow;
+    }
+
+    public void setDetailShow(boolean detailShow) {
+        this.detailShow = detailShow;
+    }
+
+    public void addActionListener(ActionListener listener) {
+        actionListeners.add(listener);
+    }
+
+    public void removeActionListener(ActionListener listener) {
+        actionListeners.remove(listener);
+    }
+
+    public List<ActionListener> getActionListeners() {
+        return actionListeners;
+    }
+
+    public void setActionListeners(List<ActionListener> actionListeners) {
+        this.actionListeners = actionListeners;
+    }
+
+    private void displayInit() {
         String orderTime = order.getOrderTime();
         String name = order.getCustomerName();
         String phone = order.getCustomerPhone();
         Integer payStatus = order.getPayStatus();
+        Integer deliverStatus = order.getDeliverStatus();
+        deliverStatus = (deliverStatus == null) ? 0 : deliverStatus;
         String count = order.getTotalCount();
         String amount = order.getTotalPrice();
 
@@ -167,9 +238,17 @@ public class SearchItemForm {
         orderTimeField.setText(StringUtils.isNotBlank(orderTime) ? orderTime : "");
         nameField.setText(StringUtils.isNotBlank(name) ? name : "");
         phoneField.setText(StringUtils.isNotBlank(phone) ? phone : "");
-        payLabel.setText((payStatus == 1) ? "已付款" : "未付款");
-        orderCountLable.setText(StringUtils.isNotBlank(count) ? "总数：" + count : "总数：0");
+        orderCountLabel.setText(StringUtils.isNotBlank(count) ? "总数：" + count : "总数：0");
         orderAmountLabel.setText(StringUtils.isNotBlank(amount) ? "总额：" + amount : "总额：");
+
+        payLabel.setText((payStatus == 1) ? "已付款" : "未付款");
+        payRadio.setText((payStatus == 1) ? "已付款" : "未付款");
+        payRadio.setSelected(payStatus == 1);
+        payRadio.setVisible(false);
+        deliveredLabel.setText((deliverStatus == 1) ? "已取件" : "未取件");
+        deliveredRadio.setText((deliverStatus == 1) ? "已取件" : "未取件");
+        deliveredRadio.setSelected(deliverStatus == 1);
+        deliveredRadio.setVisible(false);
 
         // 订单详情表格
         JTable jTable = new JTable();
@@ -189,16 +268,16 @@ public class SearchItemForm {
         jTable.setFont(new Font("Default", Font.PLAIN, 14));
         jTable.setBorder(BorderFactory.createEtchedBorder());
         jTable.setRowHeight(25);
-        jTable.setBackground(new Color(238, 238, 238));
 
         // 订单详情面板
         orderDetailPanel.setLayout(new BoxLayout(this.getOrderDetailPanel(), BoxLayout.Y_AXIS));
         orderDetailPanel.setBorder(BorderFactory.createTitledBorder("明细"));
         orderDetailPanel.add(jTable);
         orderDetailPanel.setVisible(detailShow);
-        orderDetailPanel.validate();
-        orderDetailPanel.repaint();
+        repaintComponent(orderDetailPanel);
+    }
 
+    private void actionInit() {
         // 打印按钮
         reprintBtn.addActionListener(e -> {
             SwingWorker worker = new SwingWorker() {
@@ -215,7 +294,6 @@ public class SearchItemForm {
         });
 
         // 详情隐藏或者显示按钮
-        detailBtn.setText("显示明细");
         detailBtn.addActionListener(e -> {
             detailShow = !detailShow;
             detailBtn.setText(detailShow ? "隐藏明细" : "显示明细");
@@ -223,12 +301,70 @@ public class SearchItemForm {
             orderDetailPanel.validate();
             orderDetailPanel.repaint();
         });
+
+        editBtn.addActionListener(e -> {
+            editing = !editing;
+            editBtn.setText(editing ? "保存" : "修改");
+            payLabel.setVisible(!editing);
+            deliveredLabel.setVisible(!editing);
+            payRadio.setVisible(editing);
+            deliveredRadio.setVisible(editing);
+            if(!editing) { // 从编辑状态点击保存进入到非编辑状态，进行订单保存
+                for(ActionListener listener: actionListeners) {
+                    listener.actionPerformed(e);
+                }
+            }
+        });
+
+        payRadio.addChangeListener(e -> {
+            if(payRadio.isSelected()) {
+                order.setPayStatus(1);
+            } else {
+                order.setPayStatus(0);
+            }
+        });
+
+        deliveredRadio.addChangeListener(e -> {
+            if(deliveredRadio.isSelected()) {
+                order.setDeliverStatus(1);
+            } else {
+                order.setDeliverStatus(0);
+            }
+        });
     }
 
     public void setBackGroundColor(Color color) {
         searchItemPanel.setBackground(color);
         orderInfoPanel.setBackground(color);
         orderDetailPanel.setBackground(color);
+        panel1.setBackground(color);
+        panel2.setBackground(color);
+        panel3.setBackground(color);
+        for (Component component : orderDetailPanel.getComponents()) {
+            if (component instanceof JTable) {
+                component.setBackground(color);
+            }
+        }
+    }
+
+    private void repaintComponent(Component component) {
+        component.validate();
+        component.repaint();
+    }
+
+    public void repainEditComponent() {
+        Integer payStatus = order.getPayStatus();
+        payLabel.setText((payStatus == 1) ? "已付款" : "未付款");
+        payRadio.setText((payStatus == 1) ? "已付款" : "未付款");
+        payRadio.setSelected(payStatus == 1);
+        repaintComponent(payLabel);
+        repaintComponent(payRadio);
+        Integer deliverStatus = order.getDeliverStatus();
+        deliveredLabel.setText((deliverStatus == 1) ? "已取件" : "未取件");
+        deliveredRadio.setText((deliverStatus == 1) ? "已取件" : "未取件");
+        deliveredRadio.setSelected(deliverStatus == 1);
+        repaintComponent(deliveredLabel);
+        repaintComponent(deliveredRadio);
     }
 
 }

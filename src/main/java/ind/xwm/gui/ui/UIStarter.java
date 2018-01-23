@@ -1,5 +1,6 @@
 package ind.xwm.gui.ui;
 
+import com.alibaba.fastjson.JSON;
 import ind.xwm.gui.model.OrderDetail;
 import ind.xwm.gui.model.Product;
 import ind.xwm.gui.model.ProductOrder;
@@ -79,7 +80,7 @@ public class UIStarter {
             }
             SwingWorker worker = new SwingWorker<Product, Void>() {
                 @Override
-                protected Product doInBackground() throws Exception {
+                protected Product doInBackground() {
                     return productService.findByName(productName);
                 }
 
@@ -340,8 +341,23 @@ public class UIStarter {
         panel.setBorder(BorderFactory.createTitledBorder(""));
         boolean isOdd = false;
         for (ProductOrder order : products) {
-            SearchItemForm searchItemForm = new SearchItemForm(order);
-            searchItemForm.setBackGroundColor(isOdd ? new Color(197, 165, 175): new Color(121, 178, 197));
+            SearchItemForm searchItemForm = new SearchItemForm(order, isOdd);
+            searchItemForm.addActionListener(e -> {
+                SwingWorker worker = new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() {
+                        ProductOrder savedOrder = productOrderService.save(searchItemForm.getOrder());
+                        logger.info(JSON.toJSONString(savedOrder));
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        searchItemForm.repainEditComponent();
+                    }
+                };
+                worker.execute();
+            });
             isOdd = !isOdd;
             JPanel itemPanel = searchItemForm.getSearchItemPanel();
             itemPanel.setBorder(BorderFactory.createTitledBorder(""));

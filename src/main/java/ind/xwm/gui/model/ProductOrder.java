@@ -29,6 +29,12 @@ public class ProductOrder {
     private Integer payStatus;
 
     /**
+     * 1 -- 已取件
+     */
+    @Column(name = "DELIVER_STATUS")
+    private Integer deliverStatus;
+
+    /**
      * 1 -- 已打印
      */
     @Column(name = "PRINT_STATUS")
@@ -115,5 +121,13 @@ public class ProductOrder {
 
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
+    }
+
+    public Integer getDeliverStatus() {
+        return deliverStatus;
+    }
+
+    public void setDeliverStatus(Integer deliverStatus) {
+        this.deliverStatus = deliverStatus;
     }
 }
