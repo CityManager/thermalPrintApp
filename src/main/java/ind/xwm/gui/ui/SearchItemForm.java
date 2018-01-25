@@ -245,10 +245,12 @@ public class SearchItemForm {
         payRadio.setText((payStatus == 1) ? "已付款" : "未付款");
         payRadio.setSelected(payStatus == 1);
         payRadio.setVisible(false);
+        payRadio.setEnabled(payStatus != 1);
         deliveredLabel.setText((deliverStatus == 1) ? "已取件" : "未取件");
         deliveredRadio.setText((deliverStatus == 1) ? "已取件" : "未取件");
         deliveredRadio.setSelected(deliverStatus == 1);
         deliveredRadio.setVisible(false);
+        deliveredRadio.setEnabled(deliverStatus != 1);
 
         // 订单详情表格
         JTable jTable = new JTable();
@@ -309,15 +311,15 @@ public class SearchItemForm {
             deliveredLabel.setVisible(!editing);
             payRadio.setVisible(editing);
             deliveredRadio.setVisible(editing);
-            if(!editing) { // 从编辑状态点击保存进入到非编辑状态，进行订单保存
-                for(ActionListener listener: actionListeners) {
+            if (!editing) { // 从编辑状态点击保存进入到非编辑状态，进行订单保存
+                for (ActionListener listener : actionListeners) {
                     listener.actionPerformed(e);
                 }
             }
         });
 
         payRadio.addChangeListener(e -> {
-            if(payRadio.isSelected()) {
+            if (payRadio.isSelected()) {
                 order.setPayStatus(1);
             } else {
                 order.setPayStatus(0);
@@ -325,7 +327,7 @@ public class SearchItemForm {
         });
 
         deliveredRadio.addChangeListener(e -> {
-            if(deliveredRadio.isSelected()) {
+            if (deliveredRadio.isSelected()) {
                 order.setDeliverStatus(1);
             } else {
                 order.setDeliverStatus(0);
@@ -357,12 +359,15 @@ public class SearchItemForm {
         payLabel.setText((payStatus == 1) ? "已付款" : "未付款");
         payRadio.setText((payStatus == 1) ? "已付款" : "未付款");
         payRadio.setSelected(payStatus == 1);
+        payRadio.setEnabled(payStatus != 1);
         repaintComponent(payLabel);
         repaintComponent(payRadio);
         Integer deliverStatus = order.getDeliverStatus();
+        deliverStatus = deliverStatus == null ? 0 : deliverStatus;
         deliveredLabel.setText((deliverStatus == 1) ? "已取件" : "未取件");
         deliveredRadio.setText((deliverStatus == 1) ? "已取件" : "未取件");
         deliveredRadio.setSelected(deliverStatus == 1);
+        deliveredRadio.setEnabled(deliverStatus != 1);
         repaintComponent(deliveredLabel);
         repaintComponent(deliveredRadio);
     }
