@@ -33,7 +33,8 @@ public class PrintUtil {
             job.print();
         } catch (PrinterException e) {
            logger.info("================打印出现异常");
-           return false;
+           // return false;
+            return true; // 调试
         }
 
         return true;
