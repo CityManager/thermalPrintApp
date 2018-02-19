@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.time.LocalDateTime;
 import java.util.Vector;
 
 /**
@@ -80,7 +81,8 @@ public class P58Model implements Printable {
         this.mainContents.add("电话：" + order.getCustomerPhone());
         this.mainContents.add("..................................................");
         this.mainContents.add("单号：" + order.getOrderId().substring(8));
-        this.mainContents.add("时间：" + order.getOrderTime());
+        this.mainContents.add("订单时间：" + order.getOrderTime());
+        this.mainContents.add("打印时间：" + LocalDateTime.now());
         this.mainContents.add("..................................................");
         this.mainContents.add("名称  数量 单价   金额      ");
 
@@ -114,10 +116,16 @@ public class P58Model implements Printable {
         this.mainContents.add("..................................................");
         this.mainContents.add("总数：" + order.getTotalCount());
         this.mainContents.add("总额：" + order.getTotalPrice());
-        if(order.getPayStatus() == 1) {
+        if (order.getPayStatus() == 1) {
             this.mainContents.add("收款：已收款");
         } else {
             this.mainContents.add("收款：未收款");
+        }
+
+        if (order.getDeliverStatus() == 1) {
+            this.mainContents.add("取件：已取件");
+        } else {
+            this.mainContents.add("取件：未取件");
         }
 
     }
