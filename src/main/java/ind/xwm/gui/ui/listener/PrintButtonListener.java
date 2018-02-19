@@ -79,11 +79,9 @@ public class PrintButtonListener implements ActionListener {
                 for (OrderDetail orderDetail : orderDetails) {
                     orderDetail.setProductOrder(order);
                 }
-                order = productOrderService.save(order);
+                order = productOrderService.save(order);  // 订单入库
                 orderIdService.usedOrderId(orderId);
-                P58Model p58Model = new P58Model();
-                p58Model.setOrderContent(order);
-                if (PrintUtil.print58(p58Model)) {
+                if (PrintUtil.print58(order)) {  // 订单打印
                     order.setPrintStatus(1);
                     return true;
                 }

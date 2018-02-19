@@ -14,7 +14,6 @@ import java.awt.*;
  * Created by XuWeiman on 2017/10/2.
  * UI启动器
  */
-@Component
 public class UIStarter {
     private static Logger logger = LogManager.getLogger(UIStarter.class);
 

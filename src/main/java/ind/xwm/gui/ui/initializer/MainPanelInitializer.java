@@ -76,6 +76,6 @@ public class MainPanelInitializer {
         for (ActionListener l : printBtn.getActionListeners()) {
             printBtn.removeActionListener(l);
         }
-        printBtn.addActionListener(new PrintButtonListener(form, table));
+        printBtn.addActionListener(new PrintButtonListener(form, table));  // 添加打印按钮点击事件
     }
 }

@@ -285,10 +285,7 @@ public class SearchItemForm {
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() {
-                    P58Model p58Model = new P58Model();
-                    p58Model.setOrderContent(order);
-                    PrintUtil.print58(p58Model);
-                    return null;
+                    return PrintUtil.print58(order);
                 }
 
             };
