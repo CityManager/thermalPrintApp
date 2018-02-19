@@ -11,8 +11,8 @@ import javax.swing.*;
  */
 public class App {
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"spring.xml"});
-        UIStarter uiStarter = context.getBean(UIStarter.class);
+        new ClassPathXmlApplicationContext(new String[]{"spring.xml"});
+        UIStarter uiStarter =  new UIStarter();
         SwingUtilities.invokeLater(uiStarter::init);
     }
 }
