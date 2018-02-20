@@ -27,3 +27,5 @@ hs_err_pid*
 out/
 target/
 thermal-print-app.iml
+/src/main/resources/META-INF/MANIFEST.MF
+src/main/java/ind/xwm/gui/ui/worker/
