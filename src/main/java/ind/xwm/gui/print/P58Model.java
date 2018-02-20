@@ -9,7 +9,8 @@ import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Vector;
  */
 public class P58Model implements Printable {
     private static Logger logger = LogManager.getLogger(P58Model.class);
+    private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private String header;
     private String footer;
@@ -27,7 +29,7 @@ public class P58Model implements Printable {
 
     public P58Model() {
         this.header = "金碣干洗店取件单";
-        this.footer = "本店电话：xxxxxxxx\r\n地址：陆丰金碣路xx号";
+        this.footer = "本店电话：8999716\r\n地址：陆丰金碣路80号";
         this.remind = "凭单取件\r\n开单后3至5个工作日可取\r\n祝您生活愉快！";
 
         this.mainContents = new Vector<>();
@@ -81,8 +83,8 @@ public class P58Model implements Printable {
         this.mainContents.add("电话：" + order.getCustomerPhone());
         this.mainContents.add("..................................................");
         this.mainContents.add("单号：" + order.getOrderId().substring(8));
-        this.mainContents.add("订单时间：" + order.getOrderTime());
-        this.mainContents.add("打印时间：" + LocalDateTime.now());
+        this.mainContents.add("下单：" + order.getOrderTime());
+        this.mainContents.add("打印：" + df.format(new Date()));
         this.mainContents.add("..................................................");
         this.mainContents.add("名称  数量 单价   金额      ");
 
@@ -122,7 +124,7 @@ public class P58Model implements Printable {
             this.mainContents.add("收款：未收款");
         }
 
-        if (order.getDeliverStatus() == 1) {
+        if (order.getDeliverStatus() != null && order.getDeliverStatus() == 1) {
             this.mainContents.add("取件：已取件");
         } else {
             this.mainContents.add("取件：未取件");

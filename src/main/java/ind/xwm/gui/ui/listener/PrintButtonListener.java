@@ -71,6 +71,7 @@ public class PrintButtonListener implements ActionListener {
                 order.setCustomerPhone(phone);
                 order.setOrderTime(orderTime);
                 order.setPayStatus(payed ? 1 : 0);
+                order.setDeliverStatus(0);
                 order.setTotalCount(count);
                 order.setTotalPrice(totalPrice);
                 Vector<OrderDetail> orderDetails = BaseUtil.getOrderDetails(tableData);
