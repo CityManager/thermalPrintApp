@@ -29,7 +29,7 @@ public class P58Model implements Printable {
 
     public P58Model() {
         this.header = "金碣干洗店取件单";
-        this.footer = "本店电话：8999716\r\n地址：陆丰金碣路80号";
+        this.footer = "本店电话：xxxxxxxx\r\n地址：陆丰金碣路xx号";
         this.remind = "凭单取件\r\n开单后3至5个工作日可取\r\n祝您生活愉快！";
 
         this.mainContents = new Vector<>();
