@@ -1,6 +1,5 @@
 package ind.xwm.gui.ui.initializer;
 
-import com.alibaba.fastjson.JSON;
 import ind.xwm.gui.model.ProductOrder;
 import ind.xwm.gui.service.ProductOrderService;
 import ind.xwm.gui.ui.PrintForm;
@@ -8,33 +7,68 @@ import ind.xwm.gui.ui.SearchItemForm;
 import ind.xwm.gui.utils.SpringBeanUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public class RecordPanelInitializer {
     private static Logger logger = LogManager.getLogger(RecordPanelInitializer.class);
+    private static Pageable pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+    private static int totalPageCount;
 
     public static void init(PrintForm form) {
-        ProductOrderService productOrderService = SpringBeanUtil.getBean(ProductOrderService.class);
-        final JTextField searchTxtField = form.getSearchField();
-        final JScrollPane searchResultPanel = form.getSearchResultPanel();
-        java.util.List<ProductOrder> products = productOrderService.findAll();  // 不符合规范
-        searchResultPanel.getViewport().add(initRecordPanel(products));
-        searchResultPanel.validate();
-        searchResultPanel.repaint();
+        clearListener(form);
+        doSearch(form);
 
-        JButton searchBtn = form.getSearchBtn();
-        for (ActionListener l : searchBtn.getActionListeners()) {
-            searchBtn.removeActionListener(l);
-        }
-        searchBtn.addActionListener(e -> {
-            String searchKey = searchTxtField.getText();
-            java.util.List<ProductOrder> searchOrders = productOrderService.searchOrders(searchKey); // 不符合规范
-            searchResultPanel.getViewport().add(initRecordPanel(searchOrders));
-            searchResultPanel.validate();
-            searchResultPanel.repaint();
+        form.getSearchBtn().addActionListener(e -> {
+            pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+            doSearch(form);
         });
+
+        form.getRecordPageUpBtn().addActionListener(e -> {
+            pageable = pageable.previousOrFirst();
+            doSearch(form);
+        });
+
+        form.getRecordPageDownBtn().addActionListener(e -> {
+            if(pageable.getPageNumber() + 1 < totalPageCount) {
+                pageable = pageable.next();
+                doSearch(form);
+            }
+
+        });
+    }
+
+
+    private static void doSearch(PrintForm form) {
+        String searchKey = form.getSearchField().getText();
+        SwingWorker<Page<ProductOrder>, Void> worker = new SwingWorker<Page<ProductOrder>, Void>() {
+            @Override
+            protected Page<ProductOrder> doInBackground() throws Exception {
+                ProductOrderService productOrderService = SpringBeanUtil.getBean(ProductOrderService.class);
+                return productOrderService.searchOrders(pageable, searchKey);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Page<ProductOrder> page = get();
+                    totalPageCount = page.getTotalPages();
+                    JScrollPane searchResultPanel = form.getSearchResultPanel();
+                    searchResultPanel.getViewport().add(initRecordPanel(page.getContent()));
+                    searchResultPanel.validate();
+                    searchResultPanel.repaint();
+                    form.getRecordPageLabel().setText((pageable.getPageNumber() + 1) + "/" + totalPageCount);
+                } catch (Exception e) {
+                    logger.info("销售记录列表异常-", e);
+                }
+            }
+        };
+        worker.execute();
     }
 
 
@@ -57,8 +91,7 @@ public class RecordPanelInitializer {
                 SwingWorker worker = new SwingWorker() {
                     @Override
                     protected Object doInBackground() {
-                        ProductOrder savedOrder = productOrderService.save(searchItemForm.getOrder());
-                        logger.info(JSON.toJSONString(savedOrder));
+                        productOrderService.save(searchItemForm.getOrder());
                         return null;
                     }
 
@@ -77,5 +110,12 @@ public class RecordPanelInitializer {
         panel.validate();
         panel.repaint();
         return panel;
+    }
+
+    private static void clearListener(PrintForm form) {
+        JButton searchBtn = form.getSearchBtn();
+        for (ActionListener l : searchBtn.getActionListeners()) {
+            searchBtn.removeActionListener(l);
+        }
     }
 }

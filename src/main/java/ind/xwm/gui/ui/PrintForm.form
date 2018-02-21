@@ -265,7 +265,7 @@
               </grid>
             </children>
           </grid>
-          <grid id="2389f" binding="recordPanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2389f" binding="recordPanel" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="10" bottom="0" right="10"/>
             <constraints>
               <tabbedpane title="销售记录"/>
@@ -292,14 +292,9 @@
                   <font size="16"/>
                 </properties>
               </component>
-              <hspacer id="516f">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
               <scrollpane id="f73f7" binding="searchResultPanel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <horizontalScrollBarPolicy value="31"/>
@@ -307,6 +302,33 @@
                 <border type="none"/>
                 <children/>
               </scrollpane>
+              <component id="37b79" class="javax.swing.JButton" binding="recordPageDownBtn">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font size="16"/>
+                  <text value="下一页"/>
+                </properties>
+              </component>
+              <component id="ae8a3" class="javax.swing.JButton" binding="recordPageUpBtn">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font size="16"/>
+                  <text value="上一页"/>
+                </properties>
+              </component>
+              <component id="b44f7" class="javax.swing.JLabel" binding="recordPageLabel">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font size="16"/>
+                  <text value="分页"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="8f86b" binding="productPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

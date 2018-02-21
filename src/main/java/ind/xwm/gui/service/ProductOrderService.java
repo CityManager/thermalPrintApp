@@ -10,6 +10,10 @@ import ind.xwm.gui.repository.UnitRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,9 +48,9 @@ public class ProductOrderService {
     @Transactional
     public ProductOrder saveProductOrder(ProductOrder productOrder) {
         List<OrderDetail> orderDetails = productOrder.getOrderDetails();
-        for(OrderDetail orderDetail: orderDetails) {
+        for (OrderDetail orderDetail : orderDetails) {
             Product product = productDao.findByName(orderDetail.getProductName());
-            if(product == null) {
+            if (product == null) {
                 product = new Product();
             }
             product.setName(orderDetail.getProductName());
@@ -55,7 +59,7 @@ public class ProductOrderService {
             productDao.save(product);
 
             Unit unit = unitDao.findByName(orderDetail.getProductUnit());
-            if(unit == null) {
+            if (unit == null) {
                 unit = new Unit();
                 unit.setName(orderDetail.getProductUnit());
                 unitDao.save(unit);
@@ -71,13 +75,32 @@ public class ProductOrderService {
         return orders;
     }
 
+    public Page<ProductOrder> findAllPage(Pageable pageable) {
+        return orderDao.findAll(pageable);
+    }
+
     public List<ProductOrder> searchOrders(String key) {
-        if(StringUtils.isBlank(key)) {
+        if (StringUtils.isBlank(key)) {
             return this.findAll();
         }
-        List<ProductOrder> orders =orderDao.searchOrders(key);
+        List<ProductOrder> orders = orderDao.searchOrders(key);
         sortOrder(orders);
         return orders;
+    }
+
+    public Page<ProductOrder> searchOrders(Pageable pageable, String key) {
+        ProductOrder order = new ProductOrder();
+        order.setOrderId(key);
+        order.setCustomerName(key);
+        order.setCustomerPhone(key);
+        ExampleMatcher.GenericPropertyMatcher matcher = ExampleMatcher.GenericPropertyMatchers.contains();
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAny()
+                .withMatcher("customerName", matcher)
+                .withMatcher("customerPhone", matcher)
+                .withMatcher("orderId", matcher).withIgnoreCase();
+
+        Example<ProductOrder> example = Example.of(order, exampleMatcher);
+        return orderDao.findAll(example, pageable);
     }
 
 

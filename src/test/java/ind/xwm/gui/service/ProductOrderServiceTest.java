@@ -8,6 +8,9 @@ import ind.xwm.gui.repository.OrderDetailRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -63,4 +66,17 @@ public class ProductOrderServiceTest extends AppTest {
         logger.info("全部订单详情-{}", JSON.toJSONString(productOrderService.findAll()));
     }
 
+    @Test
+    public void findAllPage() {
+        Pageable pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+        logger.info("订单分页-{}", JSON.toJSONString(productOrderService.findAllPage(pageable).getContent()));
+    }
+
+    @Test
+    public void searchOrders() {
+        Pageable pageable = new PageRequest(1, 1, new Sort(Sort.Direction.DESC, "orderTime"));
+        logger.info("订单分页-是不是页数{}", pageable.getOffset());
+        logger.info("订单分页-{}", JSON.toJSONString(productOrderService.searchOrders(pageable, "0002").getContent()));
+        logger.info("订单分页-是不是页数{}", pageable.getOffset());
+    }
 }

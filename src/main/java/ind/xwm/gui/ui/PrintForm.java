@@ -31,6 +31,9 @@ public class PrintForm {
     private JButton productSaveBtn;
     private JButton productDelBtn;
     private JScrollPane productScroll;
+    private JButton recordPageDownBtn;
+    private JButton recordPageUpBtn;
+    private JLabel recordPageLabel;
 
 
     public JTabbedPane getTabbedPane() {
@@ -235,5 +238,17 @@ public class PrintForm {
 
     public void setProductScroll(JScrollPane productScroll) {
         this.productScroll = productScroll;
+    }
+
+    public JButton getRecordPageDownBtn() {
+        return recordPageDownBtn;
+    }
+
+    public JButton getRecordPageUpBtn() {
+        return recordPageUpBtn;
+    }
+
+    public JLabel getRecordPageLabel() {
+        return recordPageLabel;
     }
 }
