@@ -17,34 +17,41 @@ import java.awt.event.ActionListener;
 
 public class RecordPanelInitializer {
     private static Logger logger = LogManager.getLogger(RecordPanelInitializer.class);
-    private static Pageable pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "orderTime"));
-    private static int totalPageCount;
+    private static int totalPageCount = 1;
+    private static int currentPage = 0;
 
     public static void init(PrintForm form) {
         clearListener(form);
-        doSearch(form);
+        currentPage = 0;
+        Pageable pageable = new PageRequest(currentPage, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+        doSearch(form, pageable);
 
         form.getSearchBtn().addActionListener(e -> {
-            pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "orderTime"));
-            doSearch(form);
+            currentPage = 0;
+            Pageable pageRequest = new PageRequest(currentPage, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+            doSearch(form, pageRequest);
         });
 
         form.getRecordPageUpBtn().addActionListener(e -> {
-            pageable = pageable.previousOrFirst();
-            doSearch(form);
+            if (currentPage > 0) {
+                Pageable pageRequest = new PageRequest(--currentPage, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+                doSearch(form, pageRequest);
+            }
+
         });
 
         form.getRecordPageDownBtn().addActionListener(e -> {
-            if(pageable.getPageNumber() + 1 < totalPageCount) {
-                pageable = pageable.next();
-                doSearch(form);
+
+            if (currentPage + 1 < totalPageCount) {
+                Pageable pageRequest = new PageRequest(++currentPage, 10, new Sort(Sort.Direction.DESC, "orderTime"));
+                doSearch(form, pageRequest);
             }
 
         });
     }
 
 
-    private static void doSearch(PrintForm form) {
+    private static void doSearch(PrintForm form, Pageable pageable) {
         String searchKey = form.getSearchField().getText();
         SwingWorker<Page<ProductOrder>, Void> worker = new SwingWorker<Page<ProductOrder>, Void>() {
             @Override
@@ -62,7 +69,7 @@ public class RecordPanelInitializer {
                     searchResultPanel.getViewport().add(initRecordPanel(page.getContent()));
                     searchResultPanel.validate();
                     searchResultPanel.repaint();
-                    form.getRecordPageLabel().setText((pageable.getPageNumber() + 1) + "/" + totalPageCount);
+                    form.getRecordPageLabel().setText((currentPage + 1) + "/" + totalPageCount);
                 } catch (Exception e) {
                     logger.info("销售记录列表异常-", e);
                 }
