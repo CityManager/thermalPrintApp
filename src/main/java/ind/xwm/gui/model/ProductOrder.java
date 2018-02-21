@@ -34,6 +34,9 @@ public class ProductOrder {
     @Column(name = "DELIVER_STATUS")
     private Integer deliverStatus;
 
+    @Column(name = "DELIVER_TIME")
+    private String deliverTime;
+
     /**
      * 1 -- 已打印
      */
@@ -129,5 +132,13 @@ public class ProductOrder {
 
     public void setDeliverStatus(Integer deliverStatus) {
         this.deliverStatus = deliverStatus;
+    }
+
+    public String getDeliverTime() {
+        return deliverTime;
+    }
+
+    public void setDeliverTime(String deliverTime) {
+        this.deliverTime = deliverTime;
     }
 }

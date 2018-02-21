@@ -2,7 +2,6 @@ package ind.xwm.gui.ui;
 
 import ind.xwm.gui.model.OrderDetail;
 import ind.xwm.gui.model.ProductOrder;
-import ind.xwm.gui.print.P58Model;
 import ind.xwm.gui.utils.PrintUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,13 +9,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by XuWeiman on 2017/10/4.
  */
 public class SearchItemForm {
+    private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private JPanel searchItemPanel;
     private JTextField orderNoField;
     private JTextField nameField;
@@ -36,12 +38,15 @@ public class SearchItemForm {
     private JPanel panel1;
     private JPanel panel2;
     private JPanel panel3;
+    private JLabel deliverTimeLabel;
+    private JPanel panel4;
 
     private java.util.List<ActionListener> actionListeners = new ArrayList<>();
 
     private boolean detailShow = false;
     private boolean editing = false;
     private ProductOrder order;
+
 
     private static Color[] colors = new Color[]{new Color(197, 165, 175), new Color(121, 178, 197)};
 
@@ -219,6 +224,16 @@ public class SearchItemForm {
         this.actionListeners = actionListeners;
     }
 
+    public JLabel getDeliverTimeLabel() {
+        return deliverTimeLabel;
+    }
+
+    public void setDeliverTimeLabel(JLabel deliverTimeLabel) {
+        this.deliverTimeLabel = deliverTimeLabel;
+    }
+
+
+
     private void displayInit() {
         String orderTime = order.getOrderTime();
         String name = order.getCustomerName();
@@ -226,6 +241,8 @@ public class SearchItemForm {
         Integer payStatus = order.getPayStatus();
         Integer deliverStatus = order.getDeliverStatus();
         deliverStatus = (deliverStatus == null) ? 0 : deliverStatus;
+        String deliverTime = order.getDeliverTime();
+        deliverTime = (deliverTime == null) ? "" : deliverTime;
         String count = order.getTotalCount();
         String amount = order.getTotalPrice();
 
@@ -251,6 +268,7 @@ public class SearchItemForm {
         deliveredRadio.setSelected(deliverStatus == 1);
         deliveredRadio.setVisible(false);
         deliveredRadio.setEnabled(deliverStatus != 1);
+        deliverTimeLabel.setText("取件时间：" + deliverTime);
 
         // 订单详情表格
         JTable jTable = new JTable();
@@ -326,6 +344,7 @@ public class SearchItemForm {
         deliveredRadio.addChangeListener(e -> {
             if (deliveredRadio.isSelected()) {
                 order.setDeliverStatus(1);
+                order.setDeliverTime(df.format(new Date()));
             } else {
                 order.setDeliverStatus(0);
             }
@@ -339,6 +358,9 @@ public class SearchItemForm {
         panel1.setBackground(color);
         panel2.setBackground(color);
         panel3.setBackground(color);
+        panel4.setBackground(color);
+        payRadio.setBackground(color);
+        deliveredRadio.setBackground(color);
         for (Component component : orderDetailPanel.getComponents()) {
             if (component instanceof JTable) {
                 component.setBackground(color);
@@ -367,6 +389,10 @@ public class SearchItemForm {
         deliveredRadio.setEnabled(deliverStatus != 1);
         repaintComponent(deliveredLabel);
         repaintComponent(deliveredRadio);
+        String deliverTime = order.getDeliverTime();
+        deliverTime = (deliverTime == null) ? "": deliverTime;
+        deliverTimeLabel.setText("取件时间：" + deliverTime);
+        repaintComponent(deliverTimeLabel);
     }
 
 }

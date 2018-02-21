@@ -85,6 +85,9 @@ public class P58Model implements Printable {
         this.mainContents.add("单号：" + order.getOrderId().substring(8));
         this.mainContents.add("下单：" + order.getOrderTime());
         this.mainContents.add("打印：" + df.format(new Date()));
+        if(order.getDeliverTime() != null) {
+            this.mainContents.add("取件：" + order.getDeliverTime());
+        }
         this.mainContents.add("..................................................");
         this.mainContents.add("名称  数量 单价   金额      ");
 
