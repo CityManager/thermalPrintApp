@@ -3,18 +3,16 @@ package ind.xwm.gui.service;
 import ind.xwm.gui.AppTest;
 import ind.xwm.gui.model.Product;
 import org.junit.Test;
-
-import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by XuWeiman on 2017/10/3.
  * Product service 单元测试
  */
 public class ProductServiceTest extends AppTest {
-    @Resource
+    @Autowired
     private ProductService productService;
+
     @Test
     public void findAll() throws Exception {
     }

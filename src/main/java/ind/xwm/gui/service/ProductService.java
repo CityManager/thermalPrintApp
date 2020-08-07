@@ -4,9 +4,9 @@ import ind.xwm.gui.model.Product;
 import ind.xwm.gui.model.Unit;
 import ind.xwm.gui.repository.ProductRepository;
 import ind.xwm.gui.repository.UnitRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Vector;
@@ -17,10 +17,10 @@ import java.util.Vector;
  */
 @Service
 public class ProductService {
-    @Resource
+    @Autowired
     private ProductRepository productDao;
 
-    @Resource
+    @Autowired
     private UnitRepository unitDao;
 
     public List<Product> findAll() {
@@ -41,7 +41,7 @@ public class ProductService {
     @Transactional
     public void save(Product product) {
         Product productInDb = productDao.findByName(product.getName());
-        if(productInDb != null) {
+        if (productInDb != null) {
             productInDb.setUnit(product.getUnit());
             productInDb.setPrice(product.getPrice());
         } else {
@@ -50,7 +50,7 @@ public class ProductService {
         product = productDao.save(productInDb);
         String unitName = product.getUnit();
         Unit unit = unitDao.findByName(unitName);
-        if(unit == null) {
+        if (unit == null) {
             unit = new Unit();
             unit.setName(unitName);
             unitDao.save(unit);

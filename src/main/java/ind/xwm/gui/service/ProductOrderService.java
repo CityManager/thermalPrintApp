@@ -10,13 +10,13 @@ import ind.xwm.gui.repository.UnitRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,13 +31,13 @@ import java.util.List;
 public class ProductOrderService {
     private static Logger logger = LogManager.getLogger(ProductOrderService.class);
 
-    @Resource
+    @Autowired
     private ProductOrderRepository orderDao;
 
-    @Resource
+    @Autowired
     private ProductRepository productDao;
 
-    @Resource
+    @Autowired
     private UnitRepository unitDao;
 
     @Transactional

@@ -8,11 +8,11 @@ import ind.xwm.gui.repository.OrderDetailRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,10 +24,10 @@ import java.util.List;
  */
 public class ProductOrderServiceTest extends AppTest {
     private static Logger logger = LogManager.getLogger(ProductOrderServiceTest.class);
-    @Resource
+    @Autowired
     private ProductOrderService productOrderService;
 
-    @Resource
+    @Autowired
     private OrderDetailRepository orderDetailDao;
 
     @Test

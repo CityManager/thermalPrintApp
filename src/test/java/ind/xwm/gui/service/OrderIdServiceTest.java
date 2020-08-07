@@ -4,8 +4,7 @@ import ind.xwm.gui.AppTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by XuWeiman on 2017/9/30.
@@ -14,7 +13,7 @@ import javax.annotation.Resource;
 public class OrderIdServiceTest extends AppTest {
     private static Logger logger = LogManager.getLogger(OrderIdServiceTest.class);
 
-    @Resource
+    @Autowired
     private OrderIdService orderIdService;
 
     @Test

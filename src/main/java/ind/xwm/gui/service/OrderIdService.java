@@ -2,9 +2,9 @@ package ind.xwm.gui.service;
 
 import ind.xwm.gui.model.OrderId;
 import ind.xwm.gui.repository.OrderIdRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +16,7 @@ import java.util.Date;
 @Service
 public class OrderIdService {
     private static String keyID = "orderid";
-    @Resource
+    @Autowired
     private OrderIdRepository orderIdDao;
 
     @Transactional

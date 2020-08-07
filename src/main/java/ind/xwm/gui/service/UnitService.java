@@ -3,9 +3,9 @@ package ind.xwm.gui.service;
 import ind.xwm.gui.model.Unit;
 import ind.xwm.gui.repository.UnitRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Vector;
 
 /**
@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 @Service
 public class UnitService {
-    @Resource
+    @Autowired
     private UnitRepository unitDao;
 
     public Vector<Unit> findAll() {
@@ -32,11 +32,11 @@ public class UnitService {
     }
 
     public void save(String name) {
-        if(StringUtils.isBlank(name)) {
+        if (StringUtils.isBlank(name)) {
             return;
         }
         Unit unit = unitDao.findByName(name);
-        if(unit == null) {
+        if (unit == null) {
             unit = new Unit();
             unit.setName(name);
             unitDao.save(unit);
