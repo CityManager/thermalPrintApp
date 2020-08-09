@@ -1,7 +1,6 @@
 package ind.xwm.gui.ui.uiComponent;
 
 import ind.xwm.gui.model.Unit;
-import javafx.scene.control.ComboBox;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -19,14 +18,15 @@ public class UnitComboBoxCellEditor extends AbstractCellEditor implements TableC
     public UnitComboBoxCellEditor(Vector<Unit> vector) {
         this.units = vector;
     }
+
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         this.comboBox = new JComboBox();
-        if(value != null && StringUtils.isNotBlank(String.valueOf(value))) {
+        if (value != null && StringUtils.isNotBlank(String.valueOf(value))) {
             this.comboBox.addItem(value);
         }
-        for(Unit unit: units) {
-            if(!unit.getName().equals(value)) {
+        for (Unit unit : units) {
+            if (!unit.getName().equals(value)) {
                 this.comboBox.addItem(unit.getName());
             }
         }

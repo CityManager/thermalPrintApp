@@ -35,7 +35,7 @@ public class OrderIdService {
         } else if (orderId.getStatus().equals(1)) {
             id = orderId.getOrderId();
         } else {
-            id = String.valueOf(Long.valueOf(orderId.getOrderId()) + 1);
+            id = String.valueOf(Long.parseLong(orderId.getOrderId()) + 1);
         }
 
         OrderId newOrderId = new OrderId();

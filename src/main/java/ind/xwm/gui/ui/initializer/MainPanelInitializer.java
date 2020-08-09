@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainPanelInitializer {
+    private static Timer timer;
 
     public static void init(PrintForm form) {
         OrderIdService orderIdService = SpringBeanUtil.getBean(OrderIdService.class);
@@ -29,10 +30,17 @@ public class MainPanelInitializer {
 
         String orderId = orderIdService.getOrderId();
         form.getOrderNoTxtField().setText(orderId.substring(8));
+        if (timer == null) {
+            timer = new Timer(1000, (e) -> {
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String todayStr = df.format(new Date());
+                form.getOrderTimeTxtField().setText(todayStr);
+            });
+            timer.start();
+        } else {
+            timer.restart();
+        }
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String todayStr = df.format(new Date());
-        form.getOrderTimeTxtField().setText(todayStr);
         form.getOrderCountTxtField().setText("");
         form.getOrderTotalTxtField().setText("");
         form.getNameField().setText("");

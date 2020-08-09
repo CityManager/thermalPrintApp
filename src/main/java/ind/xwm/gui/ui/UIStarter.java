@@ -5,7 +5,6 @@ import ind.xwm.gui.ui.initializer.ProductPanelInitializer;
 import ind.xwm.gui.ui.initializer.RecordPanelInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;

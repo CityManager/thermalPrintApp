@@ -16,10 +16,11 @@ public class StopEditingListener implements MouseListener {
     public StopEditingListener(OrderDetailTable table) {
         this.table = table;
     }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         CellEditor editor = this.table.getCellEditor();
-        if(editor != null) {
+        if (editor != null) {
             editor.stopCellEditing();
         }
     }

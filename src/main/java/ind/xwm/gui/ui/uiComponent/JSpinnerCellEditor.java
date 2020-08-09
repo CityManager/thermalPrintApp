@@ -18,7 +18,7 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         int count = 1;
         if (table != null && value != null) {
-            count = Integer.valueOf(String.valueOf(value));
+            count = Integer.parseInt(String.valueOf(value));
         }
         this.jSpinner = new JSpinner();
         jSpinner.setValue(count);
